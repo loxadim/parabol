@@ -2,8 +2,8 @@ import * as Sentry from '@sentry/browser'
 import LogRocket from 'logrocket'
 import React, {Component, ErrorInfo, ReactNode} from 'react'
 import withAtmosphere, {WithAtmosphereProps} from '~/decorators/withAtmosphere/withAtmosphere'
-import {LocalStorageKey} from '~/types/constEnums'
 import safeInitLogRocket from '../utils/safeInitLogRocket'
+import {setIsErrorProne} from '~/utils/errorProne'
 import ErrorComponent from './ErrorComponent/ErrorComponent'
 
 interface Props extends WithAtmosphereProps {
@@ -37,7 +37,7 @@ class ErrorBoundary extends Component<Props, State> {
     const logRocketId = window.__ACTION__.logRocket
     if (logRocketId) {
       safeInitLogRocket(viewerId, email)
-      window.localStorage.setItem(LocalStorageKey.ERROR_PRONE_AT, new Date().toJSON())
+      setIsErrorProne()
       LogRocket.captureException(error)
       LogRocket.track('Fatal error')
     }
