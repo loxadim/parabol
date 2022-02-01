@@ -28,7 +28,7 @@ class ErrorBoundary extends Component<Props, State> {
     const {atmosphere} = this.props
     const {viewerId} = atmosphere
     const store = atmosphere.getStore()
-    const email = (store as any)?._recordSource?._records?.[viewerId]?.email ?? ''
+    const email = (store.getSource().get(viewerId)?.email as string) ?? ''
     if (viewerId) {
       Sentry.configureScope((scope) => {
         scope.setUser({email, id: viewerId})
