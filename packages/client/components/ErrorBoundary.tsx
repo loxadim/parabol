@@ -1,11 +1,10 @@
 import * as Sentry from '@sentry/browser'
 import React, {Component, ErrorInfo, ReactNode} from 'react'
-import withAtmosphere, {WithAtmosphereProps} from '~/decorators/withAtmosphere/withAtmosphere'
 import {setIsErrorProne} from '~/utils/errorProne'
 import ErrorComponent from './ErrorComponent/ErrorComponent'
 import LogRocketManager from '~/utils/LogRocketManager'
 
-interface Props extends WithAtmosphereProps {
+interface Props {
   fallback?: (error: Error, eventId: string) => ReactNode
   children: ReactNode
 }
@@ -24,16 +23,6 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    const {atmosphere} = this.props
-    const {viewerId} = atmosphere
-    const store = atmosphere.getStore()
-    const email = (store.getSource().get(viewerId)?.email as string) ?? ''
-    if (viewerId) {
-      Sentry.configureScope((scope) => {
-        scope.setUser({email, id: viewerId})
-      })
-    }
-
     const logRocket = LogRocketManager.getInstance()
     if (logRocket) {
       setIsErrorProne()
@@ -68,4 +57,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export default withAtmosphere(ErrorBoundary)
+export default ErrorBoundary
